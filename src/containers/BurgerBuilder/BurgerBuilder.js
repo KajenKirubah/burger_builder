@@ -55,8 +55,8 @@ class BurgerBuilder extends Component {
           return ingredients[igKey]
       }).reduce((a,b) => {
           return a + b;
+          
       }, 0)
-
       this.setState({purchasable: sum > 0})
   }
 
