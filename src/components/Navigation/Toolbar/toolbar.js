@@ -1,13 +1,21 @@
-import React from 'react';
-import classes from './toolbar.module.css';
-import NavigationItems from '../NavigationItems/NavigationItems';
+import React from "react";
+import classes from "./toolbar.module.css";
+import NavigationItems from "../NavigationItems/NavigationItems";
+import Logo from "../../Logo/logo";
+import Menu from '../Menu/Menu';
 
 const toolbar = props => {
-    return (
-        <div className={classes.Toolbar}>
-            <NavigationItems />
-        </div>
-    );
-}
+  return (
+    <header className={classes.Toolbar}>
+      <Menu open={props.openMenu} />
+      <div className={classes.Logo}>
+        <Logo />
+      </div>
+      <div className={classes.DesktopOnly}>
+        <NavigationItems />
+      </div>
+    </header>
+  );
+};
 
 export default toolbar;

@@ -15,7 +15,7 @@ const burger = props => {
       return [...arr, ...el];
     }, []);
 
-  console.log(ingredients);
+  // console.log(ingredients);
 
   if(ingredients.length === 0) {
       ingredients = <p>Please add some ingredients</p>
