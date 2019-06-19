@@ -66,3 +66,8 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+######################### about project
+
+building an app that builds a burger, first through state management, then moving on to redux.  The final project will have redux, authentication, and the core app itself.  The backend will be handled by firebase.
