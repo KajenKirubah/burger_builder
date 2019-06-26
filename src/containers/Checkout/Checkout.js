@@ -1,30 +1,11 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
 import CheckoutSummary from "../../components/Order/CheckoutSummary/CheckoutSummary";
-import axios from "../../axios-orders";
 import ContactData from "./ContactData/ContactData";
 
+import { connect } from "react-redux";
+
 class Checkout extends Component {
-  state = {
-    ingredients: null,
-    price: 0
-  };
-
-  componentDidMount() {
-    const query = new URLSearchParams(this.props.location.search);
-    const ingredients = {};
-    let price = 0;
-    for (let param of query.entries()) {
-      if (param[0] === "price") {
-        price = +param[1];
-      } else {
-        ingredients[param[0]] = +param[1];
-      }
-    }
-
-    this.setState({ ingredients, price });
-  }
-
   cancelledHandler = () => {
     this.props.history.goBack();
   };
@@ -36,10 +17,10 @@ class Checkout extends Component {
   render() {
     let summary = null;
 
-    if (this.state.ingredients) {
+    if (this.props.ingredients) {
       summary = (
         <CheckoutSummary
-          ingredients={this.state.ingredients}
+          ingredients={this.props.ingredients}
           cancelled={this.cancelledHandler}
           continued={this.continuedHandler}
         />
@@ -51,11 +32,24 @@ class Checkout extends Component {
         {summary}
         <Route
           path="/checkout/contact-data"
-          render={props => <ContactData ingredients={this.state.ingredients} price={this.state.price} {...props} />}
+          render={props => (
+            <ContactData
+              ingredients={this.props.ingredients}
+              price={this.props.price}
+              {...props}
+            />
+          )}
         />
       </div>
     );
   }
 }
 
-export default Checkout;
+const mapStateToProps = state => {
+  return {
+    ingredients: state.ingredients,
+    price: state.totalPrice
+  };
+};
+
+export default connect(mapStateToProps)(Checkout);
