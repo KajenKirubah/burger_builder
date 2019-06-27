@@ -4,6 +4,8 @@ import Button from "../../../components/UI/Button/Button";
 import axios from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
+import {connect} from 'react-redux';
+import * as actions from '../../../store/actions/index';
 
 class ContactData extends Component {
   state = {
@@ -89,12 +91,12 @@ class ContactData extends Component {
         touched: false
       }
     },
-    formIsValid: false
+    formIsValid: false,
+    loading: false
   };
 
   orderHandler = e => {
     e.preventDefault();
-    this.setState({ loading: true });
 
     const formData = {};
 
@@ -108,17 +110,9 @@ class ContactData extends Component {
       orderData: formData
     }
 
-    axios
-      .post("/orders.json", order)
-      .then(resp => {
-        console.log(resp.data);
-        this.setState({ loading: false });
-        this.props.history.push("/");
-      })
-      .catch(err => {
-        console.log(err);
-        this.setState({ loading: false });
-      });
+    this.props.onPurchaseBurger(order);
+
+    
   };
 
   checkValidity(value, rules) {
@@ -197,7 +191,7 @@ class ContactData extends Component {
       </form>
     );
 
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
 
@@ -211,4 +205,16 @@ class ContactData extends Component {
   }
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+  return {
+    loading: state.order.loading
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onPurchaseBurger: (order) => dispatch(actions.purchaseBurger(order))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactData);

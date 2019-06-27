@@ -6,12 +6,10 @@ import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/OrderSummary/OrderSummary";
 import Spinner from "../../components/UI/Spinner/Spinner";
 
-import * as actions from '../../store/actions/index';
-import {connect} from 'react-redux';
+import * as actions from "../../store/actions/index";
+import { connect } from "react-redux";
 
 // import * as actionTypes from
-
-
 
 class BurgerBuilder extends Component {
   state = {
@@ -21,16 +19,15 @@ class BurgerBuilder extends Component {
   };
 
   componentDidMount() {
-    console.log("[BurgerBuilder] componentDidMount");
+    this.props.onFetchIngredients();
   }
-
 
   addIngredientHandler = ing => {
     this.props.onIncrement(ing);
   };
 
   removeIngredientHandler = ing => {
-    this.props.onDecrement(ing);  
+    this.props.onDecrement(ing);
   };
 
   updatePurchaseState = () => {
@@ -41,8 +38,8 @@ class BurgerBuilder extends Component {
       .reduce((a, b) => {
         return a + b;
       }, 0);
-    
-      return sum > 0 ;
+
+    return sum > 0;
   };
 
   purchaseHandler = () => {
@@ -55,7 +52,8 @@ class BurgerBuilder extends Component {
 
   //go to the checkout
   purchaseContinueHandler = () => {
-    this.props.history.push('/checkout');
+    this.props.onPurchaseInit();
+    this.props.history.push("/checkout");
   };
 
   render() {
@@ -67,17 +65,37 @@ class BurgerBuilder extends Component {
       disabledInfo[key] = disabledInfo[key] <= 0;
     }
 
-    let orderSummary = (
-      <OrderSummary
-        ingredients={this.props.ingredients}
-        purchaseCancelled={this.purchaseCancelledHandler}
-        purchaseContinued={this.purchaseContinueHandler}
-        price={this.props.price}
-      />
+    let orderSummary = null;
+
+    let burger = this.props.error ? (
+      <p>Ingredients can't be laoded</p>
+    ) : (
+      <Spinner />
     );
 
-    if (this.state.loading) {
-      orderSummary = <Spinner />;
+    if (this.props.ingredients) {
+      orderSummary = (
+        <OrderSummary
+          ingredients={this.props.ingredients}
+          purchaseCancelled={this.purchaseCancelledHandler}
+          purchaseContinued={this.purchaseContinueHandler}
+          price={this.props.price}
+        />
+      );
+
+      burger = (
+        <Aux>
+          <Burger ings={this.props.ingredients} />
+          <BuildControls
+            price={this.props.price}
+            addIngredient={this.addIngredientHandler}
+            removeIngredient={this.removeIngredientHandler}
+            disabled={disabledInfo}
+            ordered={this.purchaseHandler}
+            purchasable={this.updatePurchaseState()}
+          />
+        </Aux>
+      );
     }
 
     return (
@@ -88,16 +106,7 @@ class BurgerBuilder extends Component {
         >
           {orderSummary}
         </Modal>
-
-        <Burger ings={this.props.ingredients} />
-        <BuildControls
-          price={this.props.price}
-          addIngredient={this.addIngredientHandler}
-          removeIngredient={this.removeIngredientHandler}
-          disabled={disabledInfo}
-          ordered={this.purchaseHandler}
-          purchasable={this.updatePurchaseState}
-        />
+        {burger}
       </Aux>
     );
   }
@@ -105,16 +114,22 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = state => {
   return {
-    ingredients: state.ingredients,
-    price: state.totalPrice
-  }
-}
+    ingredients: state.burger.ingredients,
+    price: state.burger.totalPrice,
+    loading: state.burger.loading
+  };
+};
 
 const mapDispatchToProps = dispatch => {
   return {
-    onIncrement: (ing) => dispatch(actions.addIngredient(ing)),
-    onDecrement: (ing) => dispatch(actions.removeIngredient(ing))
-  }
-}
+    onIncrement: ing => dispatch(actions.addIngredient(ing)),
+    onDecrement: ing => dispatch(actions.removeIngredient(ing)),
+    onFetchIngredients: () => dispatch(actions.initIngredients()),
+    onPurchaseInit: () => dispatch(actions.purchaseInit())
+  };
+};
 
-export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BurgerBuilder);

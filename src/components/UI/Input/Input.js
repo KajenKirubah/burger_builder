@@ -3,7 +3,7 @@ import classes from "./Input.module.css";
 
 const input = props => {
   let inputElement = null;
-  const inputClasses = [classes.Input];
+  const inputClasses = [classes.InputElement];
 
   if(props.invalid && props.touched) {
       inputClasses.push(classes.Invalid);
@@ -32,7 +32,7 @@ const input = props => {
       break;
     case "select":
       inputElement = (
-        <select value={props.value} className={classes.Input}
+        <select value={props.value} className={classes.InputElement}
         onChange={props.changed}>
           {props.elementConfig.options.map(option => (
             <option key={option.value} value={option.value}>
