@@ -1,5 +1,6 @@
 import * as actionTypes from "./actions";
 import axios from "axios";
+import config from '../../../config';
 
 const authStart = () => {
   return {
@@ -42,12 +43,15 @@ const checkAuthTimeout = expirationTime => {
 export const auth = (email, password, isSignup) => {
   return dispatch => {
     dispatch(authStart());
+
+    const key = config.MY_KEY;
+
     let url =
-      "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyBAP-2JNW0F319G9b_9G_kE66RFMzJX-lU";
+      "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=" + key;
 
     if (!isSignup) {
       url =
-        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBAP-2JNW0F319G9b_9G_kE66RFMzJX-lU";
+        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=" + key;
     }
     const authData = {
       email,
